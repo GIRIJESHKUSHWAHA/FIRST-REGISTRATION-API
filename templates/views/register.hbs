@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css" />
+    <title>Document</title>
+</head>
+
+<body>
+    {{>navbar}}
+   
+    <form action="/register" method="POST">
+        <fieldset>
+            <legend>REGISTER HEAR:</legend>
+            <label for="first name:">FIRST NAME:</label>
+            <input type="text" id="firstName" name="firstName" value="" placeholder="first name"></br>
+
+            <label for="last name:">LAST NAME:</label>
+            <input type="text" id="lastName" name="lastName" value="" placeholder="last name"></br>
+
+            <label for="gender">GENDER:</label>
+            <label for="male:">MALE</label>
+            <input type="radio" id="male" name="gender" value="male" />
+            <label for="male:">FEMALE</label>
+            <input type="radio" id="female" name="gender" value="female"/></br>
+
+            <labe for="email_id"> Email_id:</labe>
+            <input type="text"  id="email" name="email" value="" placeholder="email_id"></br>
+
+            <label for="mobile number" >Mobile Number:</label>
+            <input type="Number" id="number" name="number" value="" placeholder="Mob_Number"/></br>
+
+            <label for="pwd">PASSWORD:</label>
+             <input type="password" id="password" name="password" value="" placeholder="PASSWORD"/>
+             <input type="password" id="rePassword" name="rePassword" value="" placeholder="RE_PASSWORD"/></br>
+
+            <input type="submit" value="REGISTER" ></br>
+        </fieldset>
+    </form>
+
+
+</body>
+
+</html>
