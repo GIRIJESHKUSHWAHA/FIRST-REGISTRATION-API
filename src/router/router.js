@@ -1,5 +1,3 @@
-
-
 const express = require("express");
 const router = new express.Router();
 
@@ -51,6 +49,7 @@ router.post("/students", async (req, res) => {
     try {
         const insertData = await StudentModel.insertMany(req.body.data)
         if (insertData) {
+            
             res.send({ message: "data updated successfully", data: insertData })
         } else {
             res.send({ msg: "data not updated...." })
