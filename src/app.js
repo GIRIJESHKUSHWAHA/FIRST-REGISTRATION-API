@@ -12,7 +12,8 @@ const auth = require("./databaseconnection/auth");
 //const { contentType, cookie } = require("express/lib/response");
 
 require('./databaseconnection/connection');
-const registerModel = new require('./model/register');
+const userModel = new require('./model/register');
+const messageModel = new require('./model/message')
 const app = express()
 
 const static_path = path.join(__dirname, "../public");
@@ -40,35 +41,40 @@ app.get("/secret", auth, (req, res) => {
 
 app.get("/register", (req, res) => {
     res.render("register.hbs");
-})
+});
 
 app.get("/login", (req, res) => {
     res.render("login.hbs");
-})
+});
+app.get("/message", (req, res) => {
+    res.render("message.hbs");
+});
+
+app.get("/users", (req, res) => {
+    res.render("users.hbs");
+});
 
 app.post("/register", async (req, res) => {
-   
+
     try {
         const password = req.body.password;
         const rePassword = req.body.rePassword;
 
         if (password === rePassword) {
             const bcryptPass = await bcrypt.hash(req.body.password, 10);
-            const studentsData = new registerModel({
+            const studentsData = new userModel({
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
                 gender: req.body.gender,
                 email: req.body.email,
                 number: req.body.number,
                 password: bcryptPass
-              
+
             })
-            
             const token = await studentsData.generateAuthToken();
-            
             // res.cookie() method is use to set the cookies
             res.cookie("jwt", token, {
-                expires: new Date(Date.now() + 3000),
+                expires: new Date(Date.now() + 100000),
                 httpOnly: true,
                 //secure: true
             });
@@ -86,7 +92,7 @@ app.post("/login", async (req, res) => {
     try {
         const email = req.body.email;
         const password = req.body.password;
-        const userEmail = await registerModel.findOne({ email: email });
+        const userEmail = await userModel.findOne({ email: email });
 
         if (!userEmail) {
             res.send("invalid login details");
@@ -96,11 +102,11 @@ app.post("/login", async (req, res) => {
         if (isMatch) {
             const token = await userEmail.generateAuthToken();
             res.cookie("jwt", token, {
-                expires: new Date(Date.now() + 100000),
+                expires: new Date(Date.now() + 1000000000),
                 httpOnly: true,
                 secure: true
             });
-            res.status(201).render("index.hbs");
+            res.status(201).render("message.hbs");
         }
         else {
             res.send("invalid login details");
@@ -133,7 +139,54 @@ app.get('/check-jwt', async (req, res) => {
     return res.send({ token: data });
 
 })
+app.post('/message', auth, async (req, res) => {
+    try {
+        const _id = req.body.receiver;
+        const receiver_id =await  userModel.findOne({_id:_id});
+        if(receiver_id){
+        const msg = new messageModel({
+            sender: req.user._id,
+            receiver: req.body.receiver,
+            message: req.body.message
+        })
+        const message = await msg.save();
+        res.status(201).render("message.hbs");
+    }
+    else {
+        res.send("invalid receiver id");
+    }
+    } catch (error) {
+        console.log("error: ", error)
+        res.send({ msg: "token is not verify:", error });
+    }
 
+})
+
+app.get('/users/list', async (req, res) => {
+
+    try {
+        const data = await userModel.find({ })
+       // console.log("alluser", data);
+        return res.send(data).render("users.hbs").redirect();
+      //  res.redirect();
+        
+    } catch (error) {
+        res.send("unable to load page")
+    }
+    // return res.send({
+    //     data: [{
+    //         id: 1,
+    //         name: 'ajay',
+    //     }, {
+    //         id: 2,
+    //         name: 'vijay',
+    //     }, {
+    //         id: 3,
+    //         name: 'xerxes',
+    //     }]
+    // });
+
+})
 
 app.listen(port, () => {
     console.log(`server is running on port: ${port}`);
