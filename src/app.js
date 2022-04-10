@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser")
 const auth = require("./databaseconnection/auth");
 
-
+// this is new comment added in new branch registraction-module
 //const cors = require('cors');
 //const { contentType, cookie } = require("express/lib/response");
 
